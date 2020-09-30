@@ -35,7 +35,7 @@ public class PlaylistController {
 
 
     @GetMapping
-    public ResponseEntity<List<Playlist>> findAllPlaylists(@RequestParam("userId") String userId) {
+    public ResponseEntity<List<Playlist>> findAllPlaylist(@RequestParam("userId") String userId) {
         List<Playlist> playlists = playlistService.findAllByUserId(userId);
         return ResponseEntity.ok(playlistService.findAllByUserId(userId));
     }
@@ -51,18 +51,18 @@ public class PlaylistController {
     @PostMapping("{id}/tracks")
     public ResponseEntity<Void> addTrack(@PathVariable String id, @RequestBody Track track) {
 
-            playlistService.addTrack(id, track);
-            return ResponseEntity.ok().build();
+        playlistService.addTrack(id, track);
+        return ResponseEntity.ok().build();
 
-        }
+    }
 
 
 
     @DeleteMapping("{id}/tracks")
     public ResponseEntity<Void> deleteTrack(@PathVariable String id, @RequestBody String trackId) {
 
-            playlistService.deleteTrack(id, trackId);
-            return ResponseEntity.ok().build();
+        playlistService.deleteTrack(id, trackId);
+        return ResponseEntity.ok().build();
 
 
     }

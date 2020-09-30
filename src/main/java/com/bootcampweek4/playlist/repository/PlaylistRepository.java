@@ -8,6 +8,7 @@ import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.query.QueryResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -19,23 +20,33 @@ public class PlaylistRepository {
 
 
     public PlaylistRepository(Cluster couchbaseCluster, Collection playlistCollection) {
+
         this.couchbaseCluster = couchbaseCluster;
         this.playlistCollection = playlistCollection;
     }
 
     public void create(String userId, Playlist playlist){
-        playlistCollection.insert(userId, playlist);
-
+        if(userId!=null)
+            playlistCollection.insert(userId, playlist);
+        else
+            throw new NullPointerException();
     }
 
+
+
     public Playlist findById(String id){
+
         GetResult getResult = playlistCollection.get(id);
         Playlist playlist = getResult.contentAs(Playlist.class);
         return playlist;
 
     }
 
-    public List<Playlist> findAllByUserId(String userId){
+    public List<Playlist> findAllPlaylistByUserId(String userId){
+
+        if(userId== null){
+            throw new NotFoundException("User Not Found");
+        }
         String statement = String.format("Select id,name,description,followersCount,trackCount,userId,tracks from playlist where userId='%s'",userId);
         QueryResult query = couchbaseCluster.query(statement);
         return query.rowsAs(Playlist.class);
@@ -43,27 +54,25 @@ public class PlaylistRepository {
     }
 
     public void delete(String id){
+        try{
 
-          playlistCollection.remove(id);
+            playlistCollection.remove(id);
+        }catch(Exception e){
+            throw new NotFoundException("Could not find playlist belonging to given id.");
+        }
     }
 
     public void addTrack(String id, Track addingTrack){
+
         Playlist playlist =  findById(id);
-        
-        playlist.getTracks().add(addingTrack);
-        playlist.setTrackCount(playlist.getTrackCount()+1);
+        playlist.addTrack(addingTrack);
         playlistCollection.replace(playlist.getId(),playlist);
     }
 
     public void deleteTrack(String id, String trackId){
-        Playlist playlist =  findById(id);
 
-        for(Track track : playlist.getTracks()){
-            if(track.getId().equals(trackId)){
-                playlist.getTracks().remove(track);
-            }
-        }
-        playlist.setTrackCount(playlist.getTrackCount()-1);
+        Playlist playlist =  findById(id);
+        playlist.removeTrack(trackId);
         playlistCollection.replace(playlist.getId(),playlist);
     }
 }

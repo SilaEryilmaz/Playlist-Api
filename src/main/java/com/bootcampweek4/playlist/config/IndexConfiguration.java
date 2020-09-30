@@ -2,13 +2,10 @@ package com.bootcampweek4.playlist.config;
 
 
 import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
-import com.couchbase.client.java.manager.query.CreateQueryIndexOptions;
-import com.couchbase.client.java.manager.query.QueryIndexManager;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
 
 @Configuration
 public class IndexConfiguration {
@@ -20,12 +17,12 @@ public class IndexConfiguration {
         this.couchbaseCluster = couchbaseCluster;
         this.couchbaseProperties = couchbaseProperties;
     }
-
-    /*
     @Bean
     public void createIndexes() {
-        couchbaseCluster.query("CREATE INDEX playlistObjectIndex ON `playlist`(DISTINCT ARRAY `t`.`name` FOR t in `track` END)");
-    }*/
 
+        // couchbaseCluster.query("CREATE INDEX playlistId ON `Playlist`(Playlist.id);");
+        //  couchbaseCluster.query("CREATE INDEX playlistUserId ON `Playlist`(Playlist.userId);");
+
+    }
 
 }

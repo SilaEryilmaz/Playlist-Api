@@ -3,7 +3,6 @@ package com.bootcampweek4.playlist.models;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
 public class Playlist {
 
 
@@ -25,13 +22,42 @@ public class Playlist {
     private int trackCount;
     private String userId;
 
-    public Playlist(String id, String name, String description, int followersCount, List<Track> tracks, int trackCount, String userId) {
-        this.id = id;
+    public Playlist(String name, String description, int followersCount, String userId) {
+
+        if(userId==null) {
+            throw new IllegalStateException();
+        }
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.description = description;
-        this.followersCount = followersCount;
-       // List<Track> tracklist = new ArrayList<>();
-        this.trackCount = trackCount;
+        this.followersCount = 0;
+        this.tracks = new ArrayList<Track>();
+        this.trackCount = 0;
         this.userId = userId;
+    }
+
+    public Playlist() {
+        this.id = UUID.randomUUID().toString();
+        this.name = "";
+        this.description = "";
+        this.userId = null;
+        this.followersCount = 0;
+        this.trackCount = 0;
+        this.tracks = new ArrayList<Track>();
+    }
+
+    public void addTrack(Track track) {
+        this.tracks.add(track);
+        this.trackCount++;
+    }
+
+    public void removeTrack(String trackId){
+        try {
+            this.tracks.removeIf(track -> track.getId().equals(trackId));
+            this.trackCount--;
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("silinemedi");
+        }
     }
 }
